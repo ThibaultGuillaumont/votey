@@ -20,10 +20,10 @@
   <link href="/assets/css/main.css" rel="stylesheet">
   <!-- Google fonts -->
   <link rel="stylesheet"
-      href="https://fonts.googleapis.com/css?family=Roboto+Mono">
+  href="https://fonts.googleapis.com/css?family=Roboto+Mono">
 
   <script>
-    console.log("Léno, petit gallopin, qu'est ce que tu fais là ?!");
+  console.log("Léno, petit gallopin, qu'est ce que tu fais là ?!");
   </script>
 
   <!-- Insert these scripts at the bottom of the HTML, but before you use any Firebase services -->
@@ -39,39 +39,79 @@
   <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-firestore.js"></script>
 
 
+  <script src="https://www.gstatic.com/firebasejs/ui/4.6.0/firebase-ui-auth.js"></script>
+  <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.6.0/firebase-ui-auth.css" />
 
   <script>
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyCVNYXaHOu3pPHAuitP6j7QNyLo6XB1XTI",
-      authDomain: "votey-1210f.firebaseapp.com",
-      databaseURL: "https://votey-1210f.firebaseio.com",
-      projectId: "votey-1210f",
-      storageBucket: "votey-1210f.appspot.com",
-      messagingSenderId: "494078537990",
-      appId: "1:494078537990:web:3d028583483d1b3ceb6e87"
-    };
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    var db = firebase.firestore();
-     db.collection("sondage").get().then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-            console.log(`${doc.id} => ${doc.data()}`);
-            console.log(doc.data());
-            $(window).on('load', function(){
-            $("#siteTitle").text( "Bonjour" );
-});
 
-        });
+  // Initialize the FirebaseUI Widget using Firebase.
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyCVNYXaHOu3pPHAuitP6j7QNyLo6XB1XTI",
+    authDomain: "votey-1210f.firebaseapp.com",
+    databaseURL: "https://votey-1210f.firebaseio.com",
+    projectId: "votey-1210f",
+    storageBucket: "votey-1210f.appspot.com",
+    messagingSenderId: "494078537990",
+    appId: "1:494078537990:web:3d028583483d1b3ceb6e87"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  var db = firebase.firestore();
+  db.collection("bets").get().then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      console.log(`${doc.id} => ${doc.data()}`);
+      console.log(doc.data().description);
+      console.log(doc.data().bets);
+      console.log(doc.data().bets.length);
+      console.log(doc.data().bets[0].answer);
     });
-  </script>
 
-  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-  <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-  <![endif]-->
+  });
+
+
+//Authentification
+var uiConfig = {
+  callbacks: {
+    signInSuccessWithAuthResult: function(authResult, redirectUrl) {
+      // User successfully signed in.
+      // Return type determines whether we continue the redirect automatically
+      // or whether we leave that to developer to handle.
+      return true;
+    },
+    uiShown: function() {
+      // The widget is rendered.
+      // Hide the loader.
+      document.getElementById('loader').style.display = 'none';
+    }
+  },
+  // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
+  signInFlow: 'popup',
+  signInSuccessUrl: 'bet',
+  signInOptions: [
+    // Leave the lines as is for the providers you want to offer your users.
+    firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+    firebase.auth.EmailAuthProvider.PROVIDER_ID,
+  ],
+  // Terms of service url.
+  tosUrl: '<your-tos-url>',
+  // Privacy policy url.
+  privacyPolicyUrl: '<your-privacy-policy-url>'
+};
+
+
+
+var ui = new firebaseui.auth.AuthUI(firebase.auth());
+ui.start('#firebaseui-auth-container', uiConfig);
+</script>
+
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
 {% seo %}
 </head>
 

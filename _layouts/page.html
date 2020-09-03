@@ -3,7 +3,7 @@ layout: base
 ---
 
 <!-- Header -->
-<header class="masthead pagehead" {% if page.background_image %} style="background-image: {{ page.background_image }}"{% endif %} >
+<header class="masthead pagehead" {% if page.background_image %} style="background-image: {{ page.background_image }}"{% endif %}>
   <div class="container h-100">
     <div class="row h-100 align-items-center justify-content-center text-center">
       <div class="col-lg-10 ">
@@ -14,6 +14,75 @@ layout: base
   </div>
 </header>
 
+
+<script>
+firebase.auth().onAuthStateChanged(function(user) {
+ if (user) {
+   console.log("user : " + user.email);
+ } else {
+   window.location.href = "/";
+ }
+});
+
+function listbets() {
+  var tbl = document.createElement('table');
+  tbl.classList.add('table');
+  var tbdy = document.createElement('tbody');
+  db.collection("bets").get().then((querySnapshot) => {
+  querySnapshot.forEach((doc) => {
+    var tr = document.createElement('tr');
+    var td = document.createElement('td');
+    td.appendChild(document.createTextNode(doc.data().description));
+    td.setAttribute('colSpan', '3');
+    tr.appendChild(td);
+    tbdy.appendChild(tr);
+    bets = doc.data().bets
+    console.log(bets);
+
+    var tr = document.createElement('tr');
+    var td = document.createElement('td');
+    td.appendChild(document.createTextNode("Parieur"));
+    tr.appendChild(td);
+      var td = document.createElement('td');
+    td.appendChild(document.createTextNode("Montant"));
+    tr.appendChild(td);
+      var td = document.createElement('td');
+    td.appendChild(document.createTextNode("Réponse"));
+    tr.appendChild(td);
+    tbdy.appendChild(tr);
+
+    for (i=0;i<bets.length;i++) {
+      var tr = document.createElement('tr');
+      var td = document.createElement('td');
+      td.appendChild(document.createTextNode(bets[i].user));
+      tr.appendChild(td);
+        var td = document.createElement('td');
+      td.appendChild(document.createTextNode(bets[i].bet + "€"));
+      tr.appendChild(td);
+        var td = document.createElement('td');
+      td.appendChild(document.createTextNode(bets[i].answer));
+      tr.appendChild(td);
+      tbdy.appendChild(tr);
+    }
+    tbl.appendChild(tbdy);
+    tbl.appendChild(tbdy);
+    var elem = document.getElementById("betTable");
+    elem.appendChild(tbl)
+    console.log(tbdy);
+  })
+})
+
+
+}
+listbets()
+
+</script>
+
+
+<div id="betTable"></div>
+
+
+
 <!-- Any Ready-to-Use sections -->
 {% for section in page.sections %}
     {% include {{ section.type }} section=section site=site page=page %}
@@ -23,7 +92,9 @@ layout: base
 {% assign content = content | strip_newlines %}
 {% if content != "" %}
 <section class="page-section {{ page.background_style }}">
+
   <div class="container">
+
     {{ content }}
   </div>
 </section>
